@@ -2,11 +2,14 @@
   "name": "p0n0marev/ispmanager6",
   "license": "MIT",
   "description": "ispmanager php api.",
+  "authors": [
+    {
+      "name": "Sergei Ponomarev",
+      "email": "ponomarevsa@yandex.ru"
+    }
+  ],
   "require": {
-    "guzzlehttp/guzzle": "^7.8",
-    "php-http/client-common": "^2.7",
-    "symfony/options-resolver": "^7.0",
-    "psr/http-client": "^1.0"
+    "symfony/options-resolver": "^7.0"
   },
   "autoload": {
     "psr-4": {

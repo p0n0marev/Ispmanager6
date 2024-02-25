@@ -1,31 +1,28 @@
 <?php
 
-
 namespace P0n0marev\Ispmanager6;
 
-use Psr\Http\Client\ClientInterface;
+use P0n0marev\Ispmanager6\Adapters\Ispmanager6AdapterInterface;
+use P0n0marev\Ispmanager6\Adapters\XmlAdapter;
+use P0n0marev\Ispmanager6\Api\Authenticate;
+use P0n0marev\Ispmanager6\Api\Presets;
+use P0n0marev\Ispmanager6\Api\Users;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Client
 {
-
-    private ClientInterface $httpClient;
     private array $options;
-    private string $auth;
+    private ?string $auth = null;
+    private Ispmanager6AdapterInterface $adapter;
 
-    public function __construct(ClientInterface $httpClient, array $options = [])
+    public function __construct(array $options = [])
     {
-        $this->httpClient = $httpClient;
-
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
 
         $this->options = $resolver->resolve($options);
-    }
 
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setRequired(['host', 'username', 'password']);
+        $this->adapter = new $this->options['adapter'];
     }
 
     public function setHost(string $host): void
@@ -45,24 +42,47 @@ class Client
 
     public function authenticate(): void
     {
-        $pattern = '<host>/ispmgr?out=xml&func=auth&username=<username>&password=<password>';
-        $url = strtr($pattern, [
-            '<host>'     => $this->options['host'],
-            '<username>' => $this->options['username'],
-            '<password>' => $this->options['password'],
-        ]);
-        $xml = file_get_contents($url);
-        $rs = simplexml_load_string($xml);
-        $this->auth = (string)$rs->auth;
+        $this->auth = (new Authenticate($this))->auth($this->options['username'], $this->options['password']);
     }
 
-    public function getHttpClient(): ClientInterface
+    public function getAdapter()
     {
-        return $this->httpClient;
+        return $this->adapter;
     }
 
-    public function getAuth(): string
+    public function getHost(): ?string
+    {
+        return $this->options['host'];
+    }
+
+    public function getAuth(): ?string
     {
         return $this->auth;
+    }
+
+    public function getLang(): string
+    {
+        return $this->options['lang'];
+    }
+
+    public function getOut(): string
+    {
+        return $this->options['out'];
+    }
+
+    public function users(): Users
+    {
+        return new Users($this);
+    }
+
+    public function presets(): Presets
+    {
+        return new Presets($this);
+    }
+
+    private function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults(['lang' => 'ru', 'adapter' => XmlAdapter::class])
+            ->setRequired(['host', 'username', 'password']);
     }
 }

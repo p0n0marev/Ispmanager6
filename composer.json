@@ -1,4 +1,11 @@
 {
   "name": "p0n0marev/ispmanager6",
-  "license": "MIT"
+  "license": "MIT",
+  "description": "ispmanager php api.",
+  "require": {
+    "guzzlehttp/guzzle": "^7.8",
+    "php-http/client-common": "^2.7",
+    "symfony/options-resolver": "^7.0",
+    "psr/http-client": "^1.0"
+  }
 }

@@ -1,5 +1,15 @@
 # ISPManager6 PHP API Client
 
+User management only:
+
+* List;
+* Create;
+* Update;
+* Delete;
+* Suspend;
+* Resume;
+* History.
+
 ## Installation
 
 ```bash

@@ -14,6 +14,7 @@ class Client
     private array $options;
     private ?string $auth = null;
     private Ispmanager6AdapterInterface $adapter;
+    private array $log = [];
 
     public function __construct(array $options = [])
     {
@@ -45,9 +46,9 @@ class Client
         $this->auth = (new Authenticate($this))->auth($this->options['username'], $this->options['password']);
     }
 
-    public function getAdapter()
+    public function getAdapter(string $data): Ispmanager6AdapterInterface
     {
-        return $this->adapter;
+        return $this->adapter->getInstance($data);
     }
 
     public function getHost(): ?string
@@ -78,6 +79,17 @@ class Client
     public function presets(): Presets
     {
         return new Presets($this);
+    }
+
+    public function addLog(string $message, array $data): void
+    {
+        $this->log[] = $message;
+        $this->log[] = $data;
+    }
+
+    public function getLog(): array
+    {
+        return $this->log;
     }
 
     private function configureOptions(OptionsResolver $resolver): void

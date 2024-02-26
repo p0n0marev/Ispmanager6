@@ -2,7 +2,7 @@
 
 namespace P0n0marev\Ispmanager6\Api;
 
-use P0n0marev\Ispmanager6\Message\ResponseMediator;
+use P0n0marev\Ispmanager6\Entities\HistoryEntity;
 use P0n0marev\Ispmanager6\Entities\UserEntity;
 
 final class Users extends AbstractApi
@@ -12,29 +12,47 @@ final class Users extends AbstractApi
      */
     public function list(): array
     {
-        $rs = $this->request('user');
+        $this->request('user');
 
-        return ResponseMediator::getList($rs['elem'], UserEntity::class);
+        return $this->adapter->getList(UserEntity::class);
     }
 
-    public function create(UserEntity $userModel): string
+    public function create(UserEntity $userEntity): void
     {
-        $rs = $this->request('user.edit', array_merge(['sok' => 'ok'], $userModel->toArray()));
+        $this->request('user.edit', array_merge(['sok' => 'ok'], $userEntity->toArray()));
+    }
 
-        return $rs['id'];
+    public function update(UserEntity $userEntity): void
+    {
+        $this->request('user.edit', array_merge(['sok' => 'ok', 'elid' => $userEntity->name], $userEntity->toArray()));
     }
 
     public function get(string $name): UserEntity
     {
-        $rs = $this->request('user.edit', ['elid' => $name]);
+        $this->request('user.edit', ['elid' => $name]);
 
-        return ResponseMediator::getElement($rs, UserEntity::class);
+        return $this->adapter->getElement(UserEntity::class);
     }
 
-    public function delete(string $name): bool
+    public function delete(string $name): void
     {
-        $rs = $this->request('user.delete', ['elid' => $name]);
+        $this->request('user.delete', ['elid' => $name]);
+    }
 
-        return ResponseMediator::isSuccess($rs);
+    public function suspend(string $name): void
+    {
+        $this->request('user.suspend', ['elid' => $name]);
+    }
+
+    public function resume(string $name): void
+    {
+        $this->request('user.resume', ['elid' => $name]);
+    }
+
+    public function history(string $name): array
+    {
+        $this->request('user.history', ['elid' => $name]);
+
+        return $this->adapter->getList(HistoryEntity::class);
     }
 }

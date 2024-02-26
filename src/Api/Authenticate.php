@@ -6,8 +6,10 @@ class Authenticate extends AbstractApi
 {
     public function auth(string $username, string $password): string
     {
-        $rs = $this->request('auth', compact('username', 'password'));
+        $this->request('auth', compact('username', 'password'));
 
-        return $rs['auth'];
+        $data = $this->adapter->getData();
+
+        return $data['auth'];
     }
 }

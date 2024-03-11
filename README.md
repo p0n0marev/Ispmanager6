@@ -1,6 +1,6 @@
 # ISPManager6 PHP API Client
 
-User and presets management:
+Users and presets management.
 
 ## Installation
 

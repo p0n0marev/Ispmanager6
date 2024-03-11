@@ -7,7 +7,7 @@ use P0n0marev\Ispmanager6\Adapters\XmlAdapter;
 use P0n0marev\Ispmanager6\Api\Authenticate;
 use P0n0marev\Ispmanager6\Api\Presets;
 use P0n0marev\Ispmanager6\Api\Users;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use P0n0marev\Ispmanager6\Exception\Ispmanager6Exception;
 
 class Client
 {
@@ -18,10 +18,16 @@ class Client
 
     public function __construct(array $options = [])
     {
-        $resolver = new OptionsResolver();
-        $this->configureOptions($resolver);
+        $this->options = array_replace([
+            'lang' => 'ru',
+            'adapter' => XmlAdapter::class,
+        ], $options);
 
-        $this->options = $resolver->resolve($options);
+        foreach (['host', 'username', 'password'] as $requiredOption) {
+            if (empty($this->options[$requiredOption])) {
+                throw new Ispmanager6Exception(sprintf('The required "%s" option is missing.', $requiredOption));
+            }
+        }
 
         $this->adapter = new $this->options['adapter'];
     }
@@ -90,11 +96,5 @@ class Client
     public function getLog(): array
     {
         return $this->log;
-    }
-
-    private function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults(['lang' => 'ru', 'adapter' => XmlAdapter::class])
-            ->setRequired(['host', 'username', 'password']);
     }
 }

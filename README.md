@@ -1,14 +1,6 @@
 # ISPManager6 PHP API Client
 
-User management only:
-
-* List;
-* Create;
-* Update;
-* Delete;
-* Suspend;
-* Resume;
-* History.
+User and presets management:
 
 ## Installation
 
@@ -44,6 +36,9 @@ $userEntity = new UserEntity([
 ]);
 
 $rs = $client->users()->create($userEntity);
-
 var_dump($rs);
+
+// Presets
+$presets = $client->presets()->list();
+var_dump($presets);
 ```

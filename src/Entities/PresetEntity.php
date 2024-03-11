@@ -6,4 +6,5 @@ class PresetEntity extends BaseEntity
 {
     public int $level;
     public string $name;
+    public ?int $limit_quota = null;
 }
